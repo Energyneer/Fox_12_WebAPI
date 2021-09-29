@@ -8,32 +8,42 @@ using System.Threading.Tasks;
 
 namespace Task12
 {
+    [Route("api/[controller]")]
     public class AccountController : Controller
     {
         private readonly UserManager<User> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly SignInManager<User> _signInManager;
 
-        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager)
+        public AccountController(UserManager<User> userManager, RoleManager<IdentityRole> roleManager, SignInManager<User> signInManager)
         {
             _userManager = userManager;
+            _roleManager = roleManager;
             _signInManager = signInManager;
         }
 
         [HttpGet]
+        [Route("register")]
         public IActionResult Register()
         {
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Register(RegisterViewModel model)
+        [Route("register")]
+        public async Task<IActionResult> Register(RegisterModel model)
         {
             if (ModelState.IsValid)
             {
                 User user = new User { Email = model.Email, UserName = model.Email };
                 // добавляем пользователя
+                await _roleManager.CreateAsync(new IdentityRole("Admin"));
                 var result = await _userManager.CreateAsync(user, model.Password);
-                if (result.Succeeded)
+                var res2 = await _userManager.AddToRoleAsync(user, "Admin");
+
+                
+                
+                if (res2.Succeeded)
                 {
                     // установка куки
                     await _signInManager.SignInAsync(user, false);
@@ -51,30 +61,34 @@ namespace Task12
         }
 
         [HttpGet]
-        public IActionResult Login(string returnUrl = null)
+        [Route("login")]
+        public IActionResult Login()
         {
-            return View(new LoginViewModel { ReturnUrl = returnUrl });
+            return View(new LoginModel());
+            //return View("Success");
         }
 
         [HttpPost]
+        [Route("login")]
         //[ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(LoginViewModel model)
+        public async Task<IActionResult> Login(LoginModel model)
         {
             if (ModelState.IsValid)
             {
-                var result =
-                    await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
+                var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
                 if (result.Succeeded)
                 {
+                    return RedirectToPagePermanent("/swagger/index.html");
+                    //return Redirect(AccountInfo);
                     // проверяем, принадлежит ли URL приложению
-                    if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
+                    /*if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
                     {
                         return Redirect(model.ReturnUrl);
                     }
                     else
                     {
-                        return RedirectToAction("Index", "Home");
-                    }
+                        return RedirectToPagePermanent("/swagger/index.html");
+                    }*/
                 }
                 else
                 {
@@ -91,6 +105,13 @@ namespace Task12
             // удаляем аутентификационные куки
             await _signInManager.SignOutAsync();
             return RedirectToAction("Login", "Account");
+        }
+
+        [HttpGet]
+        [Route("info")]
+        public IActionResult AccountInfo()
+        {
+            return View(User.Identity.Name);
         }
     }
 }

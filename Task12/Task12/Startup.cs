@@ -11,6 +11,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Repositories;
+using Repositories.Impl;
 using Services;
 using Services.Impl;
 using System;
@@ -39,11 +40,16 @@ namespace Task12
             services.AddIdentity<User, IdentityRole>()
                 .AddEntityFrameworkStores<DataContext>();
 
-            services.AddScoped(typeof(IDataRepository<>), typeof(DataRepository<>));
+
+            services.AddTransient<IAccountRepository, AccountRepository>();
+            services.AddTransient<IUserTypeRepository, UserTypeRepository>();
+            services.AddTransient<IOrderRepository, OrderRepository>();
             //services.AddSingleton<UsersRepository>();
-            services.AddScoped<UsersRepository>();
+            services.AddScoped<UsersRepositoryOLD>();
 
             services.AddTransient<ITypeService, TypeServices>();
+            services.AddTransient<IOrderService, OrderService>();
+            services.AddTransient<IAccountService, AccountService>();
 
             //services.AddControllers();
             services.AddControllersWithViews();
@@ -70,17 +76,17 @@ namespace Task12
             app.UseAuthentication();
             app.UseAuthorization();
 
-            app.UseEndpoints(endpoints =>
+            /*app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
-            });
+            });*/
 
-            /*app.UseEndpoints(endpoints =>
+            app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-            });*/
+            });
         }
     }
 }

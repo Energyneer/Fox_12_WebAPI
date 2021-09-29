@@ -8,15 +8,17 @@ using System.Threading.Tasks;
 
 namespace Repositories
 {
-    public class UsersRepository
+    public class UsersRepositoryOLD
     {
+        public User SystemUser { get; }
         private readonly DataContext context;
         protected readonly DbSet<User> entities;
 
-        public UsersRepository(DataContext context)
+        public UsersRepositoryOLD(DataContext context)
         {
             this.context = context;
             entities = context.Set<User>();
+            SystemUser = context.SystemUser;
         }
 
         public User Get(string userName)

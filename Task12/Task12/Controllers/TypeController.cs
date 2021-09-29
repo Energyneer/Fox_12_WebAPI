@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Domain;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Services;
 using Services.Dto;
@@ -15,40 +16,43 @@ namespace Task12.Controllers
     public class TypeController : ControllerBase
     {
         private ITypeService _typeService;
+        private IAccountService _accountService;
 
-        public TypeController(ITypeService typeService)
+        public TypeController(ITypeService typeService, IAccountService accountService)
         {
             _typeService = typeService;
+            _accountService = accountService;
         }
 
-
-        // GET: api/<TypeController>
         [HttpGet]
-        public IEnumerable<TypeDto> Get()
+        public IEnumerable<TypeDto> GetAll(string target, bool std, bool usr, bool income, bool expend)
         {
-            string userName = User.Identity.Name;
-            return _typeService.GetType(userName);
+            return _typeService.GetAll(_accountService.GetByUserName(User.Identity.Name), std, usr, income, expend);
         }
 
-        // POST api/<TypeController>
+        [HttpGet("{id}")]
+        public TypeDto Get(int id)
+        {
+            return _typeService.Get(_accountService.GetByUserName(User.Identity.Name), id);
+        }
+
         [HttpPost]
-        public void Post(TypeDto type)
+        public void Post([FromBody] TypeDto type)
         {
-            _typeService.InsertType(type, User.Identity.Name);
+            User currentUser = _accountService.GetByUserName(User.Identity.Name);
+            _typeService.InsertType(currentUser, type);
         }
 
-        // PUT api/<TypeController>/5
         [HttpPut("{id}")]
-        public void Put(int id, TypeDto type)
+        public void Put(int id, [FromBody] TypeDto type)
         {
-            _typeService.UpdateType(id, type, User.Identity.Name);
+            _typeService.UpdateType(_accountService.GetByUserName(User.Identity.Name), type, id);
         }
 
-        // DELETE api/<TypeController>/5
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
-            _typeService.DeleteType(id, User.Identity.Name);
+            _typeService.DeleteType(_accountService.GetByUserName(User.Identity.Name), id);
         }
     }
 }

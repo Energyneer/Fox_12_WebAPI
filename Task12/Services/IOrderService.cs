@@ -1,4 +1,5 @@
-﻿using Services.Dto;
+﻿using Domain;
+using Services.Dto;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,10 +10,12 @@ namespace Services
 {
     public interface IOrderService
     {
-        IEnumerable<OrderDto> GetAllUserOrders(string userName);
-        IEnumerable<OrderDto> GetOrdersByPeriod(DateTime start, DateTime end, string userName);
-        void InsertOrder(OrderDto order, string userName);
-        void UpdateOrder(int ID, OrderDto order, string userName);
-        void DeleteOrder(int ID, string userName);
+        IEnumerable<OrderDto> GetAll(User user, string typeName = null, int start = 0, int limit = 0);
+        IEnumerable<OrderDto> GetAllFromPeriod(User user, DateTime startTime, DateTime endTime, 
+            string typeName, int start, int limit);
+        OrderDto Get(User user, int id);
+        void InsertOrder(User user, OrderDto order);
+        void UpdateOrder(User user, OrderDto order, int id);
+        void DeleteOrder(User user, int id);
     }
 }

@@ -11,70 +11,96 @@ namespace Services.Impl
 {
     public class TypeServices : ITypeService
     {
-        private UsersRepository _userIdentRepository;
-        private IDataRepository<StandartType> _standartTypeRepository;
-        private IDataRepository<UserType> _userTypeRepository;
+        private readonly IUserTypeRepository _userTypeRepository;
+        private readonly IAccountRepository _accountRepository;
+        private readonly UsersRepositoryOLD _identityRepository;
 
-        public TypeServices(UsersRepository userIdentRepository, IDataRepository<StandartType> standartTypeRepository, IDataRepository<UserType> userTypeRepository)
+        public TypeServices(IUserTypeRepository userTypeRepository, IAccountRepository accountRepository, UsersRepositoryOLD identityRepository)
         {
-            _userIdentRepository = userIdentRepository;
-            _standartTypeRepository = standartTypeRepository;
             _userTypeRepository = userTypeRepository;
+            _accountRepository = accountRepository;
+            _identityRepository = identityRepository;
         }
 
-        public IEnumerable<TypeDto> GetType()
+        public IEnumerable<TypeDto> GetAll(User user, bool standarts = true, bool users = true, bool income = true, bool expend = true)
         {
-            IEnumerable<StandartType> standartTypes = _standartTypeRepository.GetAll();
+            IEnumerable<OrderType> typesFromDB = _userTypeRepository.GetAll(user, standarts, users, income, expend);
             List<TypeDto> result = new List<TypeDto>();
-            foreach (StandartType item in standartTypes)
+            foreach (OrderType type in typesFromDB)
             {
-                result.Add(Mapper.TypeToDto(item));
+                result.Add(Mapper.TypeToDto(type));
             }
             return result;
         }
 
-        public IEnumerable<TypeDto> GetType(string userName)
+        public TypeDto Get(User user, int id)
         {
-            List<TypeDto> result = GetType().ToList();
-
-            User user = _userIdentRepository.Get(userName);
-            IEnumerable<UserType> userTypes = from item in _userTypeRepository.GetAll() where item.Owner.Equals(user) select item;
-            foreach (UserType item in userTypes)
+            OrderType type = _userTypeRepository.Get(id);
+            if (type.UserId == user.Id || type.UserId == _identityRepository.SystemUser.Id || 
+                _accountRepository.isAdmin(user))
             {
-                result.Add(Mapper.TypeToDto(item));
+                return Mapper.TypeToDto(type);
             }
-
-            return result;
+            else
+            {
+                throw new UnauthorizedAccessException();
+            }
         }
 
-        public void InsertType(TypeDto type, string userName)
+        public void InsertType(User user, TypeDto type)
         {
-            User user = _userIdentRepository.Get(userName);
-            _userTypeRepository.Insert(new UserType { OperationType = type.OperationType, Name = type.Name, Owner = user });
+            if (type == null || string.IsNullOrEmpty(type.Name))
+                throw new ArgumentNullException();
+
+            if (type.Variety == TypeVariety.STANDART && !_accountRepository.isAdmin(user))
+                throw new UnauthorizedAccessException();
+
+            OrderType existTypes = _userTypeRepository.GetByName(user, type.Name);
+
+            if (existTypes != null)
+                throw new ArgumentException("Order type name is already exist");
+
+            OrderType entity = Mapper.OrderTypeFromDto(user, type);
+            _userTypeRepository.Insert(entity);
         }
 
-        public void UpdateType(int ID, TypeDto type, string userName)
+        public void UpdateType(User user, TypeDto type, int id)
         {
-            UserType typeFromDB = _userTypeRepository.Get(ID);
-            CheckAccessRights(typeFromDB, userName);
+            if (type == null || string.IsNullOrEmpty(type.Name))
+                throw new ArgumentNullException();
 
-            typeFromDB.OperationType = type.OperationType;
+            OrderType typeFromDB = _userTypeRepository.Get(id);
+            if (typeFromDB == null)
+                throw new ArgumentException("Type with Id: " + id + " is not exist");
+
+            if (!(typeFromDB.UserId == user.Id || 
+                (type.Variety == TypeVariety.STANDART && _accountRepository.isAdmin(user))))
+            {
+                throw new UnauthorizedAccessException();
+            }
+                
+            OrderType existTypes = _userTypeRepository.GetByName(user, type.Name);
+
+            if (existTypes != null)
+                throw new ArgumentException("Order type name is already exist");
+
             typeFromDB.Name = type.Name;
+            typeFromDB.OperationCategory = type.OperationCategory;
             _userTypeRepository.Update(typeFromDB);
         }
 
-        public void DeleteType(int ID, string typeName)
+        public void DeleteType(User user, int id)
         {
-            UserType typeFromDB = _userTypeRepository.Get(ID);
-            CheckAccessRights(typeFromDB, typeName);
-            _userTypeRepository.Delete(typeFromDB);
-        }
+            OrderType typeFromDB = _userTypeRepository.Get(id);
+            if (typeFromDB == null)
+                throw new ArgumentException("Type with Id: " + id + " is not exist");
 
-        private void CheckAccessRights(UserType type, string userName)
-        {
-            User user = _userIdentRepository.Get(userName);
-            if (type.Owner != user)
+            if (typeFromDB.UserId != user.Id && !_accountRepository.isAdmin(user))
+            {
                 throw new UnauthorizedAccessException();
+            }
+
+            _userTypeRepository.Delete(typeFromDB);
         }
     }
 }

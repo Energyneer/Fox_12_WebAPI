@@ -9,30 +9,24 @@ namespace Services.Dto
 {
     public class Mapper
     {
-        public static TypeDto TypeToDto(StandartType type)
+        public static TypeDto TypeToDto(OrderType type)
         {
             return new TypeDto
             {
-                //OperationType = type.OperationType,
+                Id = type.Id,
+                Variety = TypeVariety.USER,
+                OperationCategory = type.OperationCategory,
                 Name = type.Name
             };
         }
 
-        public static TypeDto TypeToDto(UserType type)
+        public static OrderType OrderTypeFromDto(User user, TypeDto type)
         {
-            return new TypeDto
+            return new OrderType
             {
-                //OperationType = type.OperationType,
-                Name = type.Name
-            };
-        }
-
-        public static UserType TypeFromDto(TypeDto type, User user)
-        {
-            return new UserType
-            {
-                //OperationType = type.OperationType,
+                OperationCategory = type.OperationCategory,
                 Name = type.Name,
+                UserId = user.Id,
                 Owner = user
             };
         }
@@ -41,9 +35,9 @@ namespace Services.Dto
         {
             return new OrderDto
             {
-                ID = order.ID,
-                OperationType = order.UserOrderType.OperationType,
-                TypeName = order.StandartOrderType != null ? order.StandartOrderType.Name : order.UserOrderType.Name,
+                ID = order.Id,
+                OperationCategory = order.Type.OperationCategory,
+                TypeName = order.Type.Name,
                 OrderTime = order.OrderTime,
                 Amount = order.Amount,
                 Describe = order.Describe

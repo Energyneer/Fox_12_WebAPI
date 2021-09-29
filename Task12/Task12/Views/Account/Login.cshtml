@@ -1,8 +1,8 @@
-﻿@model Task12.LoginViewModel
+﻿@model Task12.LoginModel
 
-<h2>Вход в приложение</h2>
+<h2>@ViewData.ModelState</h2>
 <form method="post" asp-controller="Account" asp-action="Login"
-      asp-route-returnUrl="@Model.ReturnUrl">
+      @*asp-route-returnUrl="@Model.ReturnUrl"*@>
     <div asp-validation-summary="ModelOnly"></div>
     <div>
         <label asp-for="Email"></label><br />

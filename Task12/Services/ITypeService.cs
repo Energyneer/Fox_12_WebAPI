@@ -1,4 +1,5 @@
-﻿using Services.Dto;
+﻿using Domain;
+using Services.Dto;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,10 +10,11 @@ namespace Services
 {
     public interface ITypeService
     {
-        IEnumerable<TypeDto> GetType();
-        IEnumerable<TypeDto> GetType(string userName);
-        void InsertType(TypeDto type, string userName);
-        void UpdateType(int ID, TypeDto type, string userName);
-        void DeleteType(int ID, string typeName);
+        IEnumerable<TypeDto> GetAll(User user, bool standarts, bool users, bool income, bool expend);
+        TypeDto Get(User user, int id);
+        //bool AccessRights(User user, int id);
+        void InsertType(User user, TypeDto type);
+        void UpdateType(User user, TypeDto type, int id);
+        void DeleteType(User user, int id);
     }
 }

@@ -15,39 +15,50 @@ namespace Task12.Controllers
     public class OrderController : ControllerBase
     {
         private IOrderService _orderService;
+        private IAccountService _accountService;
 
-        public OrderController(IOrderService orderService)
+        public OrderController(IOrderService orderService, IAccountService accountService)
         {
             _orderService = orderService;
+            _accountService = accountService;
         }
 
-
-        // GET: api/<OrderController>
         [HttpGet]
-        public IEnumerable<OrderDto> Get()
+        public IEnumerable<OrderDto> GetAll(string? typename, DateTime? timestart, DateTime? timeend, int start, int limit)
         {
-            return _orderService.GetAllUserOrders(User.Identity.Name);
+            if (timestart != null && timeend != null)
+            {
+                return _orderService.GetAllFromPeriod(_accountService.GetByUserName(User.Identity.Name), 
+                    timestart.Value, timeend.Value, typename, start, limit);
+            }
+            else
+            {
+                return _orderService.GetAll(_accountService.GetByUserName(User.Identity.Name), typename, start, limit);
+            }
         }
 
-        // POST api/<OrderController>
+        [HttpGet("{id}")]
+        public OrderDto Get(int id)
+        {
+            return _orderService.Get(_accountService.GetByUserName(User.Identity.Name), id);
+        }
+
         [HttpPost]
         public void Post(OrderDto order)
         {
-            _orderService.InsertOrder(order, User.Identity.Name);
+            _orderService.InsertOrder(_accountService.GetByUserName(User.Identity.Name), order);
         }
 
-        // PUT api/<OrderController>/5
         [HttpPut("{id}")]
         public void Put(int id, OrderDto order)
         {
-            _orderService.UpdateOrder(id, order, User.Identity.Name);
+            _orderService.UpdateOrder(_accountService.GetByUserName(User.Identity.Name), order, id);
         }
 
-        // DELETE api/<OrderController>/5
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
-            _orderService.DeleteOrder(id, User.Identity.Name);
+            _orderService.DeleteOrder(_accountService.GetByUserName(User.Identity.Name), id);
         }
     }
 }
