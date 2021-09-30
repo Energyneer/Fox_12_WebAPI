@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Domain;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Services;
@@ -25,16 +26,16 @@ namespace Task12.Controllers
         }
 
         [HttpGet]
-        public int GetAll(string? typename, DateTime? timestart, DateTime? timeend, int start, int limit)
+        public int GetAll(string? typename, DateTime? timestart, DateTime? timeend)
         {
+            User user = _accountService.GetByUserName(User.Identity.Name);
             if (timestart != null && timeend != null)
             {
-                return _orderService.GetAllFromPeriod(_accountService.GetByUserName(User.Identity.Name),
-                    timestart.Value, timeend.Value, typename, start, limit).Count();
+                return _orderService.CountAllFromPeriod(user, timestart.Value, timeend.Value, typename);
             }
             else
             {
-                return _orderService.GetAll(_accountService.GetByUserName(User.Identity.Name), typename, start, limit).Count();
+                return _orderService.CountAll(_accountService.GetByUserName(User.Identity.Name), typename);
             }
         }
     }

@@ -6,16 +6,16 @@ using System.Threading.Tasks;
 
 namespace Services.Dto
 {
-    public class ReportResponse
+    public class ReportDto
     {
         public decimal Balance { get; set; }
         public decimal TotalIncome { get; set; }
         public decimal TotalExpend { get; set; }
-        public Dictionary<TypeDto, decimal> Details { get; set; }
+        public Dictionary<string, decimal> Details { get; set; }
 
-        public ReportResponse()
+        public ReportDto()
         {
-            Details = new Dictionary<TypeDto, decimal>();
+            Details = new Dictionary<string, decimal>();
         }
     }
 }

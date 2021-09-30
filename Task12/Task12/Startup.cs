@@ -44,15 +44,14 @@ namespace Task12
             services.AddTransient<IAccountRepository, AccountRepository>();
             services.AddTransient<IUserTypeRepository, UserTypeRepository>();
             services.AddTransient<IOrderRepository, OrderRepository>();
-            //services.AddSingleton<UsersRepository>();
-            services.AddScoped<UsersRepositoryOLD>();
 
             services.AddTransient<ITypeService, TypeServices>();
             services.AddTransient<IOrderService, OrderService>();
             services.AddTransient<IAccountService, AccountService>();
+            services.AddTransient<IReportService, ReportService>();
 
-            //services.AddControllers();
-            services.AddControllersWithViews();
+            services.AddControllers();
+            //services.AddControllersWithViews();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Task12", Version = "v1" });

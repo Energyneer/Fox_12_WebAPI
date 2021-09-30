@@ -9,6 +9,8 @@ namespace Repositories
 {
     public interface IAccountRepository
     {
+        public User SystemUser { get; }
+        User Get(string userName);
         bool isAdmin(User user);
     }
 }

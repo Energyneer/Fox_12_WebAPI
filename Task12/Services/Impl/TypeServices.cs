@@ -13,13 +13,11 @@ namespace Services.Impl
     {
         private readonly IUserTypeRepository _userTypeRepository;
         private readonly IAccountRepository _accountRepository;
-        private readonly UsersRepositoryOLD _identityRepository;
 
-        public TypeServices(IUserTypeRepository userTypeRepository, IAccountRepository accountRepository, UsersRepositoryOLD identityRepository)
+        public TypeServices(IUserTypeRepository userTypeRepository, IAccountRepository accountRepository)
         {
             _userTypeRepository = userTypeRepository;
             _accountRepository = accountRepository;
-            _identityRepository = identityRepository;
         }
 
         public IEnumerable<TypeDto> GetAll(User user, bool standarts = true, bool users = true, bool income = true, bool expend = true)
@@ -36,7 +34,7 @@ namespace Services.Impl
         public TypeDto Get(User user, int id)
         {
             OrderType type = _userTypeRepository.Get(id);
-            if (type.UserId == user.Id || type.UserId == _identityRepository.SystemUser.Id || 
+            if (type.UserId == user.Id || type.UserId == _accountRepository.SystemUser.Id || 
                 _accountRepository.isAdmin(user))
             {
                 return Mapper.TypeToDto(type);

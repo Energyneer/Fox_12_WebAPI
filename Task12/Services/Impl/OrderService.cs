@@ -47,6 +47,18 @@ namespace Services.Impl
             return result;
         }
 
+        public int CountAll(User user, string typeName = null)
+        {
+            OrderType typeFromDB = string.IsNullOrEmpty(typeName) ? null : _userTypeRepository.GetByName(user, typeName);
+            return _orderRepository.CountAll(user, typeFromDB);
+        }
+
+        public int CountAllFromPeriod(User user, DateTime startTime, DateTime endTime, string typeName)
+        {
+            OrderType typeFromDB = string.IsNullOrEmpty(typeName) ? null : _userTypeRepository.GetByName(user, typeName);
+            return _orderRepository.CountAll(user, startTime, endTime, typeFromDB);
+        }
+
         public OrderDto Get(User user, int id)
         {
             Order orderFromDB = _orderRepository.Get(id);

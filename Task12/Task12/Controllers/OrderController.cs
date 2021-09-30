@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Domain;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Services;
 using Services.Dto;
@@ -26,15 +27,10 @@ namespace Task12.Controllers
         [HttpGet]
         public IEnumerable<OrderDto> GetAll(string? typename, DateTime? timestart, DateTime? timeend, int start, int limit)
         {
-            if (timestart != null && timeend != null)
-            {
-                return _orderService.GetAllFromPeriod(_accountService.GetByUserName(User.Identity.Name), 
-                    timestart.Value, timeend.Value, typename, start, limit);
-            }
-            else
-            {
-                return _orderService.GetAll(_accountService.GetByUserName(User.Identity.Name), typename, start, limit);
-            }
+            User user = _accountService.GetByUserName(User.Identity.Name);
+            return timestart != null && timeend != null ? 
+                _orderService.GetAllFromPeriod(user, timestart.Value, timeend.Value, typename, start, limit) : 
+                _orderService.GetAll(user, typename, start, limit);
         }
 
         [HttpGet("{id}")]

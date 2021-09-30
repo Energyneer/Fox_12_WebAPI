@@ -1,117 +1,82 @@
 ﻿using Domain;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Task12.Authentication;
 
 namespace Task12
 {
     [Route("api/[controller]")]
-    public class AccountController : Controller
+    public class AccountController : ControllerBase
     {
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly SignInManager<User> _signInManager;
 
-        public AccountController(UserManager<User> userManager, RoleManager<IdentityRole> roleManager, SignInManager<User> signInManager)
+        public AccountController(UserManager<User> userManager, 
+            RoleManager<IdentityRole> roleManager, 
+            SignInManager<User> signInManager)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _signInManager = signInManager;
         }
 
-        [HttpGet]
-        [Route("register")]
-        public IActionResult Register()
-        {
-            return View();
-        }
-
         [HttpPost]
         [Route("register")]
-        public async Task<IActionResult> Register(RegisterModel model)
+        public async Task<bool> Register(RegisterModel model)
         {
             if (ModelState.IsValid)
             {
-                User user = new User { Email = model.Email, UserName = model.Email };
+                User user = new User { FirstName = model.FirstName, LastName = model.LastName, 
+                    Email = model.Email, UserName = model.UserName };
                 // добавляем пользователя
-                await _roleManager.CreateAsync(new IdentityRole("Admin"));
-                var result = await _userManager.CreateAsync(user, model.Password);
-                var res2 = await _userManager.AddToRoleAsync(user, "Admin");
-
-                
-                
-                if (res2.Succeeded)
+                await _roleManager.CreateAsync(new IdentityRole(Constants.DefaultAdminRole));
+                var create = await _userManager.CreateAsync(user, model.Password);
+                var addUserRole = await _userManager.AddToRoleAsync(user, Constants.DefaultUserRole);
+                if (create.Succeeded && addUserRole.Succeeded)
                 {
                     // установка куки
                     await _signInManager.SignInAsync(user, false);
-                    return RedirectToAction("Index", "Home");
+                    return true;
                 }
                 else
                 {
-                    foreach (var error in result.Errors)
-                    {
-                        ModelState.AddModelError(string.Empty, error.Description);
-                    }
+                    return false;
                 }
             }
-            return View(model);
-        }
-
-        [HttpGet]
-        [Route("login")]
-        public IActionResult Login()
-        {
-            return View(new LoginModel());
-            //return View("Success");
+            else
+            {
+                throw new ArgumentException("Request is not valid");
+            }
         }
 
         [HttpPost]
         [Route("login")]
         //[ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(LoginModel model)
+        public async Task<bool> Login(LoginModel model)
         {
             if (ModelState.IsValid)
             {
-                var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
-                if (result.Succeeded)
-                {
-                    return RedirectToPagePermanent("/swagger/index.html");
-                    //return Redirect(AccountInfo);
-                    // проверяем, принадлежит ли URL приложению
-                    /*if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
-                    {
-                        return Redirect(model.ReturnUrl);
-                    }
-                    else
-                    {
-                        return RedirectToPagePermanent("/swagger/index.html");
-                    }*/
-                }
-                else
-                {
-                    ModelState.AddModelError("", "Неправильный логин и (или) пароль");
-                }
+                var result = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, false);
+                return result.Succeeded;
             }
-            return View(model);
+            else
+            {
+                throw new ArgumentException("Request is not valid");
+            }
         }
 
         [HttpPost]
         //[ValidateAntiForgeryToken]
-        public async Task<IActionResult> Logout()
+        public async Task Logout()
         {
             // удаляем аутентификационные куки
             await _signInManager.SignOutAsync();
-            return RedirectToAction("Login", "Account");
-        }
-
-        [HttpGet]
-        [Route("info")]
-        public IActionResult AccountInfo()
-        {
-            return View(User.Identity.Name);
         }
     }
 }

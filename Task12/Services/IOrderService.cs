@@ -13,6 +13,8 @@ namespace Services
         IEnumerable<OrderDto> GetAll(User user, string typeName = null, int start = 0, int limit = 0);
         IEnumerable<OrderDto> GetAllFromPeriod(User user, DateTime startTime, DateTime endTime, 
             string typeName, int start, int limit);
+        int CountAll(User user, string typeName = null);
+        int CountAllFromPeriod(User user, DateTime startTime, DateTime endTime, string typeName);
         OrderDto Get(User user, int id);
         void InsertOrder(User user, OrderDto order);
         void UpdateOrder(User user, OrderDto order, int id);

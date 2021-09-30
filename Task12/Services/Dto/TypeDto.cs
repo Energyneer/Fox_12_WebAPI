@@ -15,7 +15,6 @@ namespace Services.Dto
         public int Id { get; set; }
 
         [Required]
-        //[JsonConverter(typeof(StringEnumConverter))]
         public Category OperationCategory { get; set; }
 
         [Required]

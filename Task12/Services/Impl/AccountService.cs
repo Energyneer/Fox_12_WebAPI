@@ -13,23 +13,20 @@ namespace Services.Impl
     {
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly UsersRepositoryOLD _usersRepository;
+        private readonly IAccountRepository _accountRepository;
 
-        public AccountService(UserManager<User> userManager, RoleManager<IdentityRole> roleManager, UsersRepositoryOLD usersRepository)
+        public AccountService(UserManager<User> userManager, RoleManager<IdentityRole> roleManager, IAccountRepository accountRepository)
         {
             _userManager = userManager;
             _roleManager = roleManager;
-            _usersRepository = usersRepository;
+            _accountRepository = accountRepository;
         }
 
         public User GetByUserName(string userName)
         {
-            return _usersRepository.Get(userName);
-            //return await _userManager.GetUserAsync(userName);
-            //throw new NotImplementedException();
+            return _accountRepository.Get(userName);
         }
 
-        //public async ValueTask<bool> IsAdmin(User user)
         public async ValueTask<bool> IsAdmin(User user)
         {
             IList<string> roles = await _userManager.GetRolesAsync(user);

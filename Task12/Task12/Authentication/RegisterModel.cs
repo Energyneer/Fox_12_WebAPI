@@ -8,6 +8,16 @@ namespace Task12
 {
     public class RegisterModel
     {
+        [Display(Name = "Имя")]
+        public string FirstName { get; set; }
+
+        [Display(Name = "Фамилия")]
+        public string LastName { get; set; }
+
+        [Required]
+        [Display(Name = "UserName")]
+        public string UserName { get; set; }
+
         [Required]
         [Display(Name = "Email")]
         public string Email { get; set; }
