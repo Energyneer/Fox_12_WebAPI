@@ -3,8 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Repositories.Impl
 {
@@ -73,7 +71,7 @@ namespace Repositories.Impl
 
         public decimal SumByType(User user, OrderType type, DateTime startTime, DateTime endTime)
         {
-            return _entities.Where(item => item.UserId == user.Id && item.TypeId == type.Id && 
+            return _entities.Where(item => item.UserId == user.Id && item.TypeId == type.Id &&
                                     item.OrderTime >= startTime && item.OrderTime <= endTime)
                                     .Sum(item => item.Amount);
         }

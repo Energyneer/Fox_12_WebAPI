@@ -3,9 +3,6 @@ using Repositories;
 using Services.Dto;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Services.Impl
 {
@@ -15,7 +12,7 @@ namespace Services.Impl
         private readonly IOrderRepository _orderRepository;
 
         public OrderService(
-            IUserTypeRepository userTypeRepository, 
+            IUserTypeRepository userTypeRepository,
             IOrderRepository orderRepository)
         {
             _userTypeRepository = userTypeRepository;
@@ -81,12 +78,15 @@ namespace Services.Impl
             if (typeFromDB == null)
                 throw new ArgumentException("Type is not exist");
 
-            Order entity = new Order { 
-                Amount = order.Amount, 
-                Describe = order.Describe, 
-                OrderTime = DateTime.Now, 
-                Owner = user, UserId = user.Id, 
-                Type = typeFromDB, TypeId = typeFromDB.Id 
+            Order entity = new Order
+            {
+                Amount = order.Amount,
+                Describe = order.Describe,
+                OrderTime = DateTime.Now,
+                Owner = user,
+                UserId = user.Id,
+                Type = typeFromDB,
+                TypeId = typeFromDB.Id
             };
 
             _orderRepository.Insert(entity);

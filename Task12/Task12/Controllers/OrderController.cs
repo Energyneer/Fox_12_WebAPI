@@ -5,8 +5,6 @@ using Services;
 using Services.Dto;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Task12.Controllers
 {
@@ -28,8 +26,8 @@ namespace Task12.Controllers
         public IEnumerable<OrderDto> GetAll(string? typename, DateTime? timestart, DateTime? timeend, int start, int limit)
         {
             User user = _accountService.GetByUserName(User.Identity.Name);
-            return timestart != null && timeend != null ? 
-                _orderService.GetAllFromPeriod(user, timestart.Value, timeend.Value, typename, start, limit) : 
+            return timestart != null && timeend != null ?
+                _orderService.GetAllFromPeriod(user, timestart.Value, timeend.Value, typename, start, limit) :
                 _orderService.GetAll(user, typename, start, limit);
         }
 

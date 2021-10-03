@@ -3,9 +3,6 @@ using Repositories;
 using Services.Dto;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Services.Impl
 {
@@ -70,21 +67,21 @@ namespace Services.Impl
             return report;
         }
 
-        private void OneTypeProcessing(User user, OrderType type, ReportDto report, 
+        private void OneTypeProcessing(User user, OrderType type, ReportDto report,
             DateTime? startTime = null, DateTime? endTime = null)
         {
-            decimal amount = startTime.HasValue && endTime.HasValue ? 
-                _orderRepository.SumByType(user, type, startTime.Value, endTime.Value) : 
+            decimal amount = startTime.HasValue && endTime.HasValue ?
+                _orderRepository.SumByType(user, type, startTime.Value, endTime.Value) :
                 _orderRepository.SumByType(user, type);
             report.Details.Add(type.Name, amount);
 
-            report.Balance = type.OperationCategory == Category.INCOME ? 
+            report.Balance = type.OperationCategory == Category.INCOME ?
                 report.Balance + amount : report.Balance - amount;
 
-            report.TotalIncome = type.OperationCategory == Category.INCOME ? 
+            report.TotalIncome = type.OperationCategory == Category.INCOME ?
                 report.TotalIncome + amount : report.TotalIncome;
 
-            report.TotalExpend = type.OperationCategory == Category.INCOME ? 
+            report.TotalExpend = type.OperationCategory == Category.INCOME ?
                 report.TotalExpend : report.TotalExpend + amount;
         }
     }

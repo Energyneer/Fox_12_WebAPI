@@ -1,9 +1,4 @@
 ﻿using Domain;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Services.Dto
 {
@@ -41,6 +36,17 @@ namespace Services.Dto
                 OrderTime = order.OrderTime,
                 Amount = order.Amount,
                 Describe = order.Describe
+            };
+        }
+
+        public static User UserFromDto(RegisterRequest request)
+        {
+            return new User
+            {
+                UserName = request.UserName,
+                Email = request.Email,
+                FirstName = request.FirstName,
+                LastName = request.LastName
             };
         }
     }

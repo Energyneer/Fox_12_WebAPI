@@ -3,9 +3,6 @@ using Repositories;
 using Services.Dto;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Services.Impl
 {
@@ -34,7 +31,7 @@ namespace Services.Impl
         public TypeDto Get(User user, int id)
         {
             OrderType type = _userTypeRepository.Get(id);
-            if (type.UserId == user.Id || type.UserId == _accountRepository.SystemUser.Id || 
+            if (type.UserId == user.Id || type.UserId == _accountRepository.SystemUser.Id ||
                 _accountRepository.isAdmin(user))
             {
                 return Mapper.TypeToDto(type);
@@ -71,12 +68,12 @@ namespace Services.Impl
             if (typeFromDB == null)
                 throw new ArgumentException("Type with Id: " + id + " is not exist");
 
-            if (!(typeFromDB.UserId == user.Id || 
+            if (!(typeFromDB.UserId == user.Id ||
                 (type.Variety == TypeVariety.STANDART && _accountRepository.isAdmin(user))))
             {
                 throw new UnauthorizedAccessException();
             }
-                
+
             OrderType existTypes = _userTypeRepository.GetByName(user, type.Name);
 
             if (existTypes != null)

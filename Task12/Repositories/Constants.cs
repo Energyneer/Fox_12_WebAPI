@@ -1,10 +1,4 @@
-﻿using Domain;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Repositories
+﻿namespace Repositories
 {
     public class Constants
     {
@@ -19,7 +13,7 @@ namespace Repositories
         public const string DefaultAdminName = "admin";
         public const string DefaultAdminPassword = "admin";
         public const string DefaultAdminRole = "Admin";
-        
+
         public const string DefaultUserID = "y28ze1c0-99sd-7cc1-bd17-90uw2y4t05xp";
         public const string DefaultUserEmail = "user@nonce.fake";
         public const string DefaultUserName = "user";

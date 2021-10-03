@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace Task12
+namespace Services.Dto
 {
-    public class LoginModel
+    public class LoginRequest
     {
         [Required]
         [Display(Name = "UserName")]

@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace Task12
+namespace Services.Dto
 {
-    public class RegisterModel
+    public class RegisterRequest
     {
         [Display(Name = "Имя")]
         public string FirstName { get; set; }

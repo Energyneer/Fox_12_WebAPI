@@ -2,16 +2,13 @@
 using Services.Dto;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Services
 {
     public interface IOrderService
     {
         IEnumerable<OrderDto> GetAll(User user, string typeName = null, int start = 0, int limit = 0);
-        IEnumerable<OrderDto> GetAllFromPeriod(User user, DateTime startTime, DateTime endTime, 
+        IEnumerable<OrderDto> GetAllFromPeriod(User user, DateTime startTime, DateTime endTime,
             string typeName, int start, int limit);
         int CountAll(User user, string typeName = null);
         int CountAllFromPeriod(User user, DateTime startTime, DateTime endTime, string typeName);

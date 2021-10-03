@@ -3,11 +3,6 @@ using Domain.Maps;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Repositories
 {
@@ -46,14 +41,14 @@ namespace Repositories
                     Name = Constants.DefaultSystemRole,
                     NormalizedName = Constants.DefaultSystemRole
                 },
-                new IdentityRole 
+                new IdentityRole
                 {
                     Id = Constants.DefaultAdminID,
                     Name = Constants.DefaultAdminRole,
                     NormalizedName = Constants.DefaultAdminRole
-                }, 
-                new IdentityRole 
-                { 
+                },
+                new IdentityRole
+                {
                     Id = Constants.DefaultUserID,
                     Name = Constants.DefaultUserRole,
                     NormalizedName = Constants.DefaultUserRole
@@ -122,8 +117,6 @@ namespace Repositories
                 new OrderType{ Id = 11, OperationCategory = Category.EXPENDITURE, Name = "Healthcare", UserId = SystemUser.Id },
                 new OrderType{ Id = 12, OperationCategory = Category.EXPENDITURE, Name = "Investing", UserId = SystemUser.Id }
             });
-
-            //base.OnModelCreating(modelBuilder);
         }
     }
 }

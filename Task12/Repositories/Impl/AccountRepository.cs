@@ -1,11 +1,7 @@
 ﻿using Domain;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Repositories.Impl
 {
@@ -27,6 +23,11 @@ namespace Repositories.Impl
         public User Get(string userName)
         {
             return _userEntities.SingleOrDefault(item => item.UserName == userName);
+        }
+
+        public User GetByEmail(string email)
+        {
+            return _userEntities.SingleOrDefault(item => item.Email == email);
         }
 
         public bool isAdmin(User user)
